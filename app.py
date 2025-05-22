@@ -1,40 +1,39 @@
-from flask import Flask,request,render_template
-import numpy as np
-import pandas as pd
-
-from sklearn.preprocessing import StandardScaler
+import streamlit as st
 from src.pipeline.predict_pipeline import CustomData, PredictPipeline
 
-application=Flask(__name__)
+st.set_page_config(page_title="Student Exam Performance Predictor", layout="centered")
 
-app = application
+st.title("Student Exam Performance Predictor")
 
-## Route for a home page
+st.markdown("### Enter student details:")
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+# Input fields
+gender = st.selectbox("Gender", ["male", "female"])
+ethnicity = st.selectbox("Race/Ethnicity", ["group A", "group B", "group C", "group D", "group E"])
+parent_education = st.selectbox("Parental Level of Education", [
+    "associate's degree", "bachelor's degree", "high school", 
+    "master's degree", "some college", "some high school"
+])
+lunch = st.selectbox("Lunch Type", ["free/reduced", "standard"])
+test_prep = st.selectbox("Test Preparation Course", ["none", "completed"])
+reading_score = st.number_input("Reading Score (out of 100)", min_value=0, max_value=100, step=1)
+writing_score = st.number_input("Writing Score (out of 100)", min_value=0, max_value=100, step=1)
 
-@app.route('/predictdata', methods={'GET','POST'})
-def predict_datapoint():
-    if request.method == 'GET':
-        return render_template('home.html')
-    else:
-        data = CustomData(
-            gender=request.form.get('gender'),
-            race_ethnicity=request.form.get('ethnicity'),
-            parental_level_of_education=request.form.get('parental_level_of_education'),
-            lunch=request.form.get('lunch'),
-            test_preparation_course=request.form.get('test_preparation_course'),
-            reading_score=float(request.form.get('reading_score')),
-            writing_score=float(request.form.get('writing_score'))
-        )
-        pred_df=data.get_data_as_data_frame()
-        print(pred_df)
-
-        predict_pipeline=PredictPipeline()
-        results=predict_pipeline.predict(pred_df)
-        return render_template('home.html',results=results[0])
+# Prediction logic
+if st.button("Predict Math Score"):
+    data = CustomData(
+        gender=gender,
+        race_ethnicity=ethnicity,
+        parental_level_of_education=parent_education,
+        lunch=lunch,
+        test_preparation_course=test_prep,
+        reading_score=reading_score,
+        writing_score=writing_score
+    )
+    input_df = data.get_data_as_data_frame()
     
-if __name__=="__main__":
-    app.run(host="0.0.0.0",debug=True)
+    pipeline = PredictPipeline()
+    result = pipeline.predict(input_df)
+
+    st.success(f"Predicted Math Score: {result[0]}")
+
