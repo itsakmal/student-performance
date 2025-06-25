@@ -2,6 +2,8 @@
 
 This project predicts the **Math Score** of students based on demographic and academic features using a range of regression models. It is designed to help educators understand which students may need academic support based on related factors such as reading and writing performance, parental education, and preparation levels.
 
+🔗 **Live Demo (Streamlit App):** [Click here to try it out](<https://student-performance-owynhbouomrkymssd9zw28.streamlit.app/>)
+
 ---
 
 ## Table of Contents
@@ -96,7 +98,7 @@ To get started with this project, follow these steps:
     numpy
     seaborn
     matplotlib
-    scikit-learn
+    scikit-learn==1.6.1
     catboost
     xgboost
     dill
